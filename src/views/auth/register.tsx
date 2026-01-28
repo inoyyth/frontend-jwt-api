@@ -1,0 +1,114 @@
+// import FC from react
+import { type FC, useState, type FormEvent } from 'react';
+
+//import hook useNavigate from react router
+import { useNavigate } from "react-router";
+
+//import custom  hook useRegister from hooks
+import { useRegister } from "../../hooks/auth/useRegister";
+
+//interface for validation errors
+interface ValidationErrors {
+    [key: string]: string[];
+}
+
+const Register: FC = () => {
+
+    //initialize navigate
+    const navigate = useNavigate();
+
+    //initialize useRegister
+    const { mutate, isPending } = useRegister();
+
+    //define state
+    const [name, setName] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+
+    //define state for errors
+    const [errors, setErrors] = useState<ValidationErrors>({});
+
+    // Handle submit form
+    const handleRegister = async (e: FormEvent) => {
+        e.preventDefault();
+
+        // Call the register mutation
+        mutate({
+            name,
+            email,
+            password
+        }, {
+            onSuccess: () => {
+
+                // Redirect to login page
+                navigate('/login');
+            },
+            onError: (error: Error) => {
+                const axiosError = error as { response?: { data?: { data?: ValidationErrors; message?: string }; status?: number } };
+                const response = axiosError?.response?.data;
+                const status = axiosError?.response?.status;
+
+                // reset error
+                setErrors({});
+
+                // VALIDATION ERROR (422)
+                if (status === 422 && response?.data) {
+                    setErrors(response.data);
+                    return;
+                }
+
+                // EMAIL DUPLICATE (409)
+                if (status === 409) {
+                    setErrors({
+                        email: [response?.message || 'Email already exists'],
+                    });
+                    return;
+                }
+            }
+
+        })
+
+    }
+
+    return (
+        <div className="row justify-content-center">
+            <div className="row justify-content-center">
+                <div className="col-md-4">
+                    <div className="card border-0 rounded-4 shadow-sm">
+                        <div className="card-body">
+                            <h4 className='fw-bold text-center'>REGISTER</h4>
+                            <hr />
+                            <form onSubmit={handleRegister}>
+                                <div className="form-group mb-3">
+                                    <label className="mb-1 fw-bold">Full Name</label>
+                                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control"
+                                        placeholder="Full Name" />
+                                    {errors.name && <div className="alert alert-danger mt-2 rounded-4">{errors.name[0]}</div>}
+                                </div>
+
+                                <div className="form-group mb-3">
+                                    <label className="mb-1 fw-bold">Email address</label>
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control"
+                                        placeholder="Email Address" />
+                                    {errors.email && <div className="alert alert-danger mt-2 rounded-4">{errors.email[0]}</div>}
+                                </div>
+
+                                <div className="form-group mb-3">
+                                    <label className="mb-1 fw-bold">Password</label>
+                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control"
+                                        placeholder="Password" />
+                                    {errors.password && <div className="alert alert-danger mt-2 rounded-4">{errors.password[0]}</div>}
+                                </div>
+                                <button type="submit" className="btn btn-primary w-100 rounded-4" disabled={isPending}>
+                                    {isPending ? 'Loading...' : 'REGISTER'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default Register;
