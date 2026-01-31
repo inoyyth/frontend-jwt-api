@@ -1,19 +1,21 @@
 import SidebarMenu from "../../../components/SidebarMenu"
-import { useUser, type User, type UserQueryParams } from "../../../hooks/useUser"
+import { useUser, type User, type UserQueryParams } from "../../../hooks/user/useUser.tsx"
 import { useModal } from "../../../hooks/modal/useModal.ts"
-import FormUser from "./form.tsx" 
+import FormUser from "./components/form.tsx" 
 import { useToast } from "../../../hooks/toast/useToast.ts"
 import { useEffect, useState, useRef, useCallback } from "react"
 import { useToastAuth } from "../../../hooks/auth/useToastAuth.tsx"
+import TableUser from "./components/table.tsx"
+import Pagination from "../../../components/shared/pagination/index.tsx"
         
 const Users = () => {
     const [paginationParams, setPaginationParams] = useState<UserQueryParams>({
         keyword: '',
         page: 1,
-        limit: 2
+        limit: 10
     });
     const [searchTerm, setSearchTerm] = useState('');
-    const debounceTimeoutRef = useRef(0);
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     
     const { getUser, removeUser } = useUser(paginationParams)
     const { data: users, isLoading, isError, error, refetch } = getUser
@@ -110,59 +112,13 @@ const Users = () => {
                         <div className="card-body">
                             {isLoading && <p>Loading...</p>}
                             {isError && <p>Error loading users</p>}
-                            {users?.data && <table className="table table-hover table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {users?.data.map((user) => (
-                                    <tr key={user.id}>
-                                        <td>{user.name}</td>
-                                        <td>{user.email}</td>
-                                        <td className="d-flex gap-1 justify-content-center align-items-center">
-                                            <button className="btn btn-primary btn-sm rounded-pill" onClick={() => {
-                                                openModal(user)
-                                            }}>Edit</button>
-                                            <button className="btn btn-danger btn-sm rounded-pill" onClick={() => {confirmDeleteModal(user)}}>Delete</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>}
-                            {users?.pagination && (
-                                <div className="d-flex justify-content-between align-items-center mt-3">
-                                    <div className="text-muted">
-                                        Showing {((paginationParams.page - 1) * paginationParams.limit) + 1} to {Math.min(paginationParams.page * paginationParams.limit, users.pagination.total)} of {users.pagination.total} entries
-                                    </div>
-                                    <div className="d-flex gap-1">
-                                        <button 
-                                            className="btn btn-sm btn-outline-primary" 
-                                            onClick={() => {
-                                                setPaginationParams(prev => ({ ...prev, page: prev.page - 1 }));
-                                            }}
-                                            disabled={paginationParams.page <= 1}
-                                        >
-                                            Previous
-                                        </button>
-                                        <span className="btn btn-sm btn-outline-secondary disabled">
-                                            Page {paginationParams.page} of {users.pagination.total_page}
-                                        </span>
-                                        <button 
-                                            className="btn btn-sm btn-outline-primary" 
-                                            onClick={() => {
-                                                setPaginationParams(prev => ({ ...prev, page: prev.page + 1 }));
-                                            }}
-                                            disabled={paginationParams.page >= users.pagination.total_page}
-                                        >
-                                            Next
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
+                            {users?.data && <TableUser users={users.data} openModal={openModal} confirmDeleteModal={confirmDeleteModal} />}
+                            {users?.pagination && ( <Pagination
+                                dt={users.pagination}
+                                paginationParams={paginationParams}
+                                onPrevious={() => setPaginationParams(prev => ({ ...prev, page: prev.page - 1 }))}
+                                onNext={() => setPaginationParams(prev => ({ ...prev, page: prev.page + 1 }))}
+                            />)}
                         </div>
                     </div>
                 </div>

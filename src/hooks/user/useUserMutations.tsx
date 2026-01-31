@@ -1,56 +1,11 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import Api from "../service/api";
+import Api from "../../service/api";
+import { type UserRequest, type UserResponse } from "./useUser";
 
-export interface UserRequest {
-    id?: number;
-    name: string;
-    email: string;
-    password?: string;
-}
+export type { UserRequest, User } from "./useUser";
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    created_at: string;
-    updated_at: string;
-}
-
-export interface UserQueryParams {
-    keyword: string;
-    page: number;
-    limit: number;
-}
-
-export interface Pagination {
-    page: number;
-    limit: number;
-    total: number;
-    total_page: number;
-}
-
-export interface UserResponse {
-    data: User[];
-    pagination: Pagination;
-}
-
-export const useUser = (params?: UserQueryParams) => {
-    const getUser = useQuery({
-        queryKey: ['get_users', params],
-        queryFn: async () => {
-            const token = Cookies.get('token');
-            const response = await Api.get(`/user`, {
-                params: params || { keyword: '', page: 1, limit: 10 },
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            return response.data.data as UserResponse;
-        },
-    });
-
+export const useUserMutations = () => {
     const storeUser = useMutation({
         mutationKey: ['store_users'],
         mutationFn: async (user: UserRequest) => {
@@ -94,7 +49,6 @@ export const useUser = (params?: UserQueryParams) => {
     })
     
     return {
-        getUser,
         storeUser,
         updateUser,
         removeUser

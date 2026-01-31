@@ -1,5 +1,5 @@
 import React from 'react';
-import { useModal } from '../hooks/modal/useModal';
+import { useModal } from '../../../hooks/modal/useModal';
 
 interface ModalRendererProps {
     className?: string;

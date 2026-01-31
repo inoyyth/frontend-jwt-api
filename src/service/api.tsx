@@ -1,4 +1,5 @@
 import axios from "axios";
+import { base_url } from "../config/config";
 
 export interface ApiError {
     response?: {
@@ -7,9 +8,9 @@ export interface ApiError {
         };
     };
 }
-
+console.log("API BASE URL", base_url)
 const Api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: base_url,
 });
 
 export default Api;
