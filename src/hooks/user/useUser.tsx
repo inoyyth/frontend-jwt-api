@@ -1,12 +1,13 @@
     import { useMutation, useQuery } from "@tanstack/react-query";
     import { ApiWithAuth } from "../../service/api";
 import type { UserQueryParams, UserResponse, UserRequest } from "../../types/user.type";
+import { api_endpoint } from "../../config/config";
 
     export const useUser = (params?: UserQueryParams) => {
         const getUser = useQuery({
             queryKey: ['get_users', params],
             queryFn: async () => {
-                const response = await ApiWithAuth.get(`/user`, {
+                const response = await ApiWithAuth.get(api_endpoint.user.get, {
                     params: params || { keyword: '', page: 1, limit: 10 },
                 });
                 
@@ -17,7 +18,7 @@ import type { UserQueryParams, UserResponse, UserRequest } from "../../types/use
         const storeUser = useMutation({
             mutationKey: ['store_users'],
             mutationFn: async (user: UserRequest) => {
-                const response = await ApiWithAuth.post('/user', user);
+                const response = await ApiWithAuth.post(api_endpoint.user.store, user);
                 
                 return response.data.data as UserResponse;
             },
@@ -26,7 +27,7 @@ import type { UserQueryParams, UserResponse, UserRequest } from "../../types/use
         const updateUser = useMutation({
             mutationKey: ['update_users'],
             mutationFn: async (user: UserRequest) => {
-                const response = await ApiWithAuth.put(`/user/${user?.id}`, user);
+                const response = await ApiWithAuth.put(`${api_endpoint.user.update}/${user.id}`, user);
                 
                 return response.data.data as UserResponse;
             },
@@ -35,7 +36,7 @@ import type { UserQueryParams, UserResponse, UserRequest } from "../../types/use
         const removeUser = useMutation({
             mutationKey: ['delete_users'],
             mutationFn: async (id: number) => {
-                const response = await ApiWithAuth.delete(`/user/${id}`);
+                const response = await ApiWithAuth.delete(`${api_endpoint.user.delete}/${id}`);
                 
                 return response.data.data as UserResponse;
             }
@@ -44,7 +45,7 @@ import type { UserQueryParams, UserResponse, UserRequest } from "../../types/use
         const downloadCsv = useQuery({
             queryKey: ['download_excel', params],
             queryFn: async () => {
-                const response = await ApiWithAuth.get(`/user/export-csv`, {
+                const response = await ApiWithAuth.get(api_endpoint.user.export_csv, {
                     params: params || { keyword: '', page: 1, limit: 10 },
                     headers: {
                         'Content-Type': 'text/csv'
@@ -60,7 +61,7 @@ import type { UserQueryParams, UserResponse, UserRequest } from "../../types/use
         const downloadExcel = useQuery({
             queryKey: ['download_excel', params],
             queryFn: async () => {
-                const response = await ApiWithAuth.get(`/user/export-excel`, {
+                const response = await ApiWithAuth.get(api_endpoint.user.export_excel, {
                     params: params || { keyword: '', page: 1, limit: 10 },
                     headers: {
                         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

@@ -16,7 +16,7 @@ const Documents: FC = () => {
     }, [showModal]);
 
     return (
-        <div className="container mt-5 mb-5">
+        <div className="mt-5 mb-5">
             <div className="row">
                 <div className="col-md-3">
                     <SidebarMenu />

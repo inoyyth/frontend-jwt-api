@@ -1,5 +1,4 @@
 import SidebarMenu from "../../../components/SidebarMenu"
-import { useUser, type User, type UserQueryParams } from "../../../hooks/user/useUser.tsx"
 import { useModal } from "../../../hooks/modal/useModal.ts"
 import FormUser from "./components/form.tsx" 
 import { useToast } from "../../../hooks/toast/useToast.ts"
@@ -8,6 +7,9 @@ import { useToastAuth } from "../../../hooks/auth/useToastAuth.tsx"
 import TableUser from "./components/table.tsx"
 import Pagination from "../../../components/shared/pagination/index.tsx"
 import BlobHandler from "../../../utils/blobHandler"
+import { useUser } from "../../../hooks/user/useUser.tsx"
+import type { User } from "../../../types/user.type.ts"
+import type { UserQueryParams } from "../../../types/user.type.ts"
         
 const Users = () => {
     const [paginationParams, setPaginationParams] = useState<UserQueryParams>({
@@ -105,7 +107,7 @@ const Users = () => {
    }, [error, addToast])
 
     return (
-        <div className="container mt-5 mb-5">
+        <div className="mt-5 mb-5">
             <div className="row">
                 <div className="col-md-3">
                     <SidebarMenu />

@@ -29,7 +29,7 @@ function App() {
         </div>
       </nav>
 
-       <div className="container mt-5">
+       <div className="container-fluid mt-5">
         <AppRoutes />
       </div>
     </div>

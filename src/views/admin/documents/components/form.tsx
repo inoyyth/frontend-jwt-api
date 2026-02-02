@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useState, type FC } from "react";
 import { useDocumentForm } from "../../../../hooks/document/useForm";
 import type { FormData } from "../../../../hooks/document/useFormValidator";
 import { uploadFileInChunks } from "../../../../utils/chunkFileHandler";
@@ -6,10 +6,12 @@ import { uploadFileInChunks } from "../../../../utils/chunkFileHandler";
 const DocumentForm: FC = () => {
 
     const {register, handleSubmit, errors} = useDocumentForm()
+    const [progressLoading, setProgressLoading] = useState<number>(0)
 
     const onSubmit = (formData: FormData) => {
        uploadFileInChunks(formData.file[0], formData.name, (progress) => {
         console.log('Progress', progress)
+        setProgressLoading(progress)
        })
     }
 
@@ -28,7 +30,7 @@ const DocumentForm: FC = () => {
                 </div>
                 <div className="mb-3 w-100 d-flex justify-content-end">
                     <button type="submit" className="btn btn-primary">
-                        Simpan
+                        Simpan {progressLoading > 0 ? `${progressLoading} %` : ''}
                     </button>
                 </div>
             </form>
