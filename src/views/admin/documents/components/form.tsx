@@ -8,7 +8,9 @@ const DocumentForm: FC = () => {
     const {register, handleSubmit, errors} = useDocumentForm()
 
     const onSubmit = (formData: FormData) => {
-       uploadFileInChunks(formData.file[0], formData.name)
+       uploadFileInChunks(formData.file[0], formData.name, (progress) => {
+        console.log('Progress', progress)
+       })
     }
 
     return (

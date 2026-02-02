@@ -16,12 +16,10 @@ export const chunkFile = (file: File) => {
 }
 
 
-export const uploadFileInChunks = async (file: File, name: string) => {
+export const uploadFileInChunks = async (file: File, name: string, setProgress: (progress: number) => void) => {
     const chunks = chunkFile(file);
     // TODO: implement upload logic
     const fileID = crypto.randomUUID();
-
-    console.log("chunks", chunks)
     
     for (let i = 0; i < chunks.length; i++) {
         const formData = new FormData();
@@ -34,6 +32,8 @@ export const uploadFileInChunks = async (file: File, name: string) => {
         await ApiWithAuth.post('/upload/chunk', formData);
 
         console.log('Uploaded chunk', i + 1, 'of', chunks.length);
+
+        setProgress(((i + 1) / chunks.length) * 100);
     }
 
     await ApiWithAuth.post('/upload/complete', { file: fileID, name });
