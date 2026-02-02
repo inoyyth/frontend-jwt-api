@@ -1,11 +1,12 @@
 import { useEffect, type FunctionComponent } from "react"
-import { useUserMutations, type User } from "../../../../hooks/user/useUserMutations"
 import { useModal } from "../../../../hooks/modal/useModal"
 import { useToast } from "../../../../hooks/toast/useToast"
 import { useUserForm } from "../../../../hooks/user/useUserForm"
 import { UserFormSubmissionService } from "../../../../hooks/user/userFormSubmissionService"
 import type { FormData } from "../../../../hooks/user/userFormValidator"
 import type { ApiError } from "../../../../service/api"
+import type { User } from "../../../../types/user.type"
+import { useUser } from "../../../../hooks/user/useUser"
 
 interface UserForm {
     fetchUser: () => void;
@@ -15,7 +16,7 @@ interface UserForm {
 const FormUser: FunctionComponent<UserForm> = ({fetchUser, data}) => {
     const { hideModal } = useModal();
     const {addToast} = useToast();
-    const { storeUser, updateUser } = useUserMutations();
+    const { storeUser, updateUser } = useUser();
     const { mutate: storeUserMutation, isPending: isStoreUserPending, error: storeUserError } = storeUser;
     const { mutate: updateuserMutation, isPending: isUpdateUserPending, error: updateUserError } = updateUser;
     

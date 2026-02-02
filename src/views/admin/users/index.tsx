@@ -7,6 +7,7 @@ import { useEffect, useState, useRef, useCallback } from "react"
 import { useToastAuth } from "../../../hooks/auth/useToastAuth.tsx"
 import TableUser from "./components/table.tsx"
 import Pagination from "../../../components/shared/pagination/index.tsx"
+import BlobHandler from "../../../utils/blobHandler"
         
 const Users = () => {
     const [paginationParams, setPaginationParams] = useState<UserQueryParams>({
@@ -17,8 +18,10 @@ const Users = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     
-    const { getUser, removeUser } = useUser(paginationParams)
+    const { getUser, removeUser, downloadCsv, downloadExcel } = useUser(paginationParams)
     const { data: users, isLoading, isError, error, refetch } = getUser
+    const { isLoading: isCsvLoading, refetch: refetchCsv } = downloadCsv
+    const { isLoading: isExcelLoading, refetch: refetchExcel } = downloadExcel
     const { showModal, hideModal } = useModal()
     const { addToast } = useToast()
     const toastAuth = useToastAuth()
@@ -55,6 +58,24 @@ const Users = () => {
         );
     }
 
+    const handleDownloadCsv= () => {
+      refetchCsv().then((dt) => {
+        if (dt.data) {
+            console.log(dt)
+            BlobHandler.downloadBlobWithAutoExtension(dt.data.data, 'users_export');
+        }
+      });
+    }
+
+    const handleDownloadExcel = () => {
+      refetchExcel().then((dt) => {
+        if (dt.data) {
+            console.log(dt)
+            BlobHandler.downloadBlobWithAutoExtension(dt.data.data, 'users_export');
+        }
+      });
+    }
+
     // Debounce search term to prevent excessive API calls
     useEffect(() => {
         if (debounceTimeoutRef.current) {
@@ -84,7 +105,7 @@ const Users = () => {
    }, [error, addToast])
 
     return (
-    <div className="container mt-5 mb-5">
+        <div className="container mt-5 mb-5">
             <div className="row">
                 <div className="col-md-3">
                     <SidebarMenu />
@@ -105,7 +126,9 @@ const Users = () => {
                                         }}
                                         style={{ width: '200px' }}
                                     />
-                                    <button className="btn btn-success btn-sm rounded-pill" onClick={() => openModal(null)}>Add User</button>
+                                    <button className="btn btn-primary btn-sm rounded-pill" onClick={() => openModal(null)}>Add User</button>
+                                    <button className="btn btn-success btn-sm rounded" disabled={isExcelLoading} onClick={() => handleDownloadExcel()}>Excel</button>
+                                    <button className="btn btn-success btn-sm rounded" disabled={isCsvLoading} onClick={() => handleDownloadCsv()}>CSV</button>
                                 </div>
                             </div>
                         </div>

@@ -4,8 +4,7 @@ import { useCallback, useRef, useState } from "react"
 import { UserFormValidator, type FormData } from "./userFormValidator"
 import { ImageService } from "../../services/imageService"
 import { useToast } from "../toast/useToast"
-import type { User } from "./useUserMutations"
-
+import type { User } from "../../types/user.type"
 
 interface UseUserFormProps {
     data?: User | null;

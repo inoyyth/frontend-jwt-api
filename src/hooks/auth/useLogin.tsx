@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import Api from "../../service/api";
+import { Api } from "../../service/api";
 
 
 interface LoginRequest {

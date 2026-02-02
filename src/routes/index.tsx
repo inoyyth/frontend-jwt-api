@@ -1,52 +1,35 @@
-//import useContext
 import { useContext } from 'react';
-
-//import context
+import { Routes, Route, Navigate } from "react-router";
 import { AuthContext } from '../context/auth/AuthContext.tsx';
 
-//import react router dom
-import { Routes, Route, Navigate } from "react-router";
-
-//import view home
 import Home from "../views/home/index.tsx";
-
-//import view register
 import Register from "../views/auth/register.tsx";
-
-//import view login
 import Login from "../views/auth/login.tsx";
 import Dashboard from '../views/admin/dashboard/index.tsx';
 import Users from '../views/admin/users/index.tsx';
+import Documents from '../views/admin/documents/index.tsx';
+
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+    const auth = useContext(AuthContext);
+    const isAuthenticated = auth?.isAuthenticated ?? false;
+    return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+    const auth = useContext(AuthContext);
+    const isAuthenticated = auth?.isAuthenticated ?? false;
+    return isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <>{children}</>;
+};
 
 export default function AppRoutes() {
-
-    // Menggunakan useContext untuk mendapatkan nilai dari AuthContext
-    const auth = useContext(AuthContext);
-
-    // Menggunakan optional chaining untuk menghindari error jika auth tidak ada
-    const isAuthenticated = auth?.isAuthenticated ?? false;
-
     return (
         <Routes>
-            {/* route "/" */}
-            <Route path="/" element={ isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <Home /> } />
-
-            route "/register"
-            <Route path="/register" element={
-                isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <Register />
-            } />
-
-            {/* route "/login" */}
-            <Route path="/login" element={
-                isAuthenticated ? <Navigate to="/admin/dashboard" replace /> : <Login />
-            } />
-            {/* route "/admin/dashboard" */}
-            <Route path="/admin/dashboard" element={
-                isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
-            } />
-            <Route path="admin/users/" element={
-                isAuthenticated ? <Users/> : <Navigate to="/login" replace />
-            } />
+            <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/admin/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+            <Route path="/admin/users" element={<PrivateRoute><Users /></PrivateRoute>} />
+            <Route path="/admin/documents" element={<PrivateRoute><Documents /></PrivateRoute>} />
         </Routes>
     );
 }

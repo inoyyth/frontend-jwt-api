@@ -1,6 +1,6 @@
 
+import type { UserRequest } from "../../types/user.type";
 import type { FormData } from "./userFormValidator"
-import type { UserRequest } from "./useUser";
 
 export class UserFormSubmissionService {
     static prepareSubmitData(formData: FormData, existingUser: boolean, imageData?: string): UserRequest {
