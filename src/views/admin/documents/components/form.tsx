@@ -1,19 +1,33 @@
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { useDocumentForm } from "../../../../hooks/document/useForm";
 import type { FormData } from "../../../../hooks/document/useFormValidator";
 import { uploadFileInChunks } from "../../../../utils/chunkFileHandler";
+import { useModal } from "../../../../hooks/modal/useModal";
 
 const DocumentForm: FC = () => {
 
+    const { hideModal } = useModal();
+    
     const {register, handleSubmit, errors} = useDocumentForm()
     const [progressLoading, setProgressLoading] = useState<number>(0)
 
     const onSubmit = (formData: FormData) => {
        uploadFileInChunks(formData.file[0], formData.name, (progress) => {
-        console.log('Progress', progress)
-        setProgressLoading(progress)
+        setProgressLoading(Number(progress.toFixed(1)))
        })
     }
+
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+        if (progressLoading >=100) {
+            timeoutId = setTimeout(() => {
+                hideModal('document-form-modal')
+            }, 1000)
+        }
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId)
+        }
+    }, [progressLoading])
 
     return (
         <div>
@@ -29,8 +43,8 @@ const DocumentForm: FC = () => {
                     {errors.file && typeof errors.file.message === 'string' && <p className="text-danger d-flex justify-content-start">{errors.file.message}</p>}
                 </div>
                 <div className="mb-3 w-100 d-flex justify-content-end">
-                    <button type="submit" className="btn btn-primary">
-                        Simpan {progressLoading > 0 ? `${progressLoading} %` : ''}
+                    <button type="submit" className="btn btn-primary" disabled={progressLoading > 0}>
+                       {progressLoading > 0 ? `${progressLoading} %` : 'Simpan'}
                     </button>
                 </div>
             </form>
