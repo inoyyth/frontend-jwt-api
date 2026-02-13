@@ -38,8 +38,8 @@ const DocumentForm: FC = () => {
                     {errors.name && typeof errors.name.message === 'string' && <p className="text-danger d-flex justify-content-start">{errors.name.message}</p>}
                 </div>
                 <div className="mb-2">
-                    <label htmlFor="file" className="form-label fw-bold d-flex justify-content-start">File</label>
-                    <input type="file" className="form-control" id="file" {...register('file')} />
+                    <label htmlFor="file" className="form-label fw-bold d-flex justify-content-start">File (Max: 10MB)</label>
+                    <input type="file" className="form-control" id="file" {...register('file')} accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp" />
                     {errors.file && typeof errors.file.message === 'string' && <p className="text-danger d-flex justify-content-start">{errors.file.message}</p>}
                 </div>
                 <div className="mb-3 w-100 d-flex justify-content-end">

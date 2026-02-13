@@ -7,24 +7,49 @@ import { useLogout } from "../hooks/auth/useLogout";
 
 //import useAuth
 
-
 const SidebarMenu: FC = () => {
-    const logout = useLogout();
-    return (
-        <div className="card border-0 rounded-4 shadow-sm">
-            <div className="card-header">
-                MAIN MENU
-            </div>
-            <div className="card-body">
-                <div className="list-group">
-                    <Link to="/admin/dashboard" className="list-group-item list-group-item-action">Dashboard</Link>
-                    <Link to="/admin/users" className="list-group-item list-group-item-action">Users</Link>
-                    <Link to="/admin/documents" className="list-group-item list-group-item-action">Documents</Link>
-                    <a href="#" className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }} onClick={logout}>Logout</a>
-                </div>
-            </div>
+  const logout = useLogout();
+  return (
+    <div className="card border-0 rounded-4 shadow-sm">
+      <div className="card-header">MAIN MENU</div>
+      <div className="card-body">
+        <div className="list-group">
+          <Link
+            to="/admin/dashboard"
+            className="list-group-item list-group-item-action"
+          >
+            Dashboard
+          </Link>
+          <Link
+            to="/admin/users"
+            className="list-group-item list-group-item-action"
+          >
+            Users
+          </Link>
+          <Link
+            to="/admin/documents"
+            className="list-group-item list-group-item-action"
+          >
+            Documents
+          </Link>
+          <Link
+            to="/admin/chats"
+            className="list-group-item list-group-item-action"
+          >
+            Chats
+          </Link>
+          <a
+            href="#"
+            className="list-group-item list-group-item-action"
+            style={{ cursor: "pointer" }}
+            onClick={logout}
+          >
+            Logout
+          </a>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
 export default SidebarMenu;
